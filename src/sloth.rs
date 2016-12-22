@@ -26,9 +26,9 @@ impl SlothApp {
     }
 
     pub fn receive_input(&self, input: String) -> bool {
-        if input == String::from("help") {
+        if input == "help" {
             self.print_help();
-        } else if input == String::from("instapaper") {
+        } else if input == "instapaper" {
             match InstapaperApp::new(self.config.clone()) {
                 Ok(instapaper_app) => instapaper_app.start(),
                 Err(_) => {
@@ -36,7 +36,7 @@ impl SlothApp {
                     return true;
                 }
             }
-        } else if input == String::from("exit") {
+        } else if input == "exit" {
             return true;
         } else {
             println!("Unrecognized input");
