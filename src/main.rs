@@ -4,8 +4,7 @@ fn main() {
     let mut rl = rustyline::Editor::<()>::new();
 
     loop {
-        let readline = rl.readline("> ");
-        match readline {
+        match rl.readline("> ") {
             Ok(line) => println!("Line: {:?}", line),
             Err(err) => {
                 println!("Error: {}", err);
