@@ -1,9 +1,12 @@
+extern crate toml;
 use std::env;
 use std::io::prelude::*;
 use std::fs::File;
+use std::collections::BTreeMap;
 
 pub enum ConfigError {
     CantOpenFile,
+    CantParseConfig,
     CantReadFile,
     NoConfigFile,
     NoHomeDirectory,
@@ -11,6 +14,7 @@ pub enum ConfigError {
 
 #[derive(Debug)]
 pub struct SlothConfig {
+    value: BTreeMap<String, toml::Value>,
 }
 
 impl SlothConfig {
@@ -38,7 +42,9 @@ impl SlothConfig {
     }
 
     fn from_raw_input(raw_input: String) -> Result<SlothConfig, ConfigError> {
-        println!("{:?}", raw_input);
-        Ok(SlothConfig {})
+        match toml::Parser::new(&raw_input).parse() {
+            Some(value) => Ok(SlothConfig { value: value }),
+            _ => Err(ConfigError::CantParseConfig),
+        }
     }
 }

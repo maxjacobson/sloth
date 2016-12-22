@@ -12,6 +12,9 @@ impl SlothApp {
         match SlothConfig::new() {
             Ok(config) => Ok(SlothApp { config: config }),
             Err(ConfigError::CantOpenFile) => Err(String::from("Couldn't open ~/.sloth.toml")),
+            Err(ConfigError::CantParseConfig) => {
+                Err(String::from("Couldn't parse ~/.sloth.toml as toml"))
+            }
             Err(ConfigError::CantReadFile) => Err(String::from("Couldn't read ~/.sloth.toml")),
             Err(ConfigError::NoConfigFile) => Err(String::from("Must create ~/.sloth.toml")),
             Err(ConfigError::NoHomeDirectory) => Err(String::from("Can't identify home directory")),
