@@ -2,6 +2,10 @@
 name = "sloth"
 version = "0.1.0"
 authors = ["Max Jacobson <max@hardscrabble.net>"]
+license = "MIT"
+readme = "README.md"
+description = "CLI tool for browsing the news"
+homepage = "https://github.com/maxjacobson/sloth"
 
 [dependencies]
 rustyline = "1.0.0"
