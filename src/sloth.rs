@@ -29,7 +29,13 @@ impl SlothApp {
         if input == String::from("help") {
             self.print_help();
         } else if input == String::from("instapaper") {
-            InstapaperApp::new().start()
+            match InstapaperApp::new(self.config.clone()) {
+                Ok(instapaper_app) => instapaper_app.start(),
+                Err(_) => {
+                    println!("UH OH");
+                    return true;
+                }
+            }
         } else if input == String::from("exit") {
             return true;
         } else {
