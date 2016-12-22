@@ -1,0 +1,6 @@
+# TODO
+
+## using rustyline features
+
+* add some kind of tab completion for supported commands
+* track input history over time for up-arrow support (I think)
