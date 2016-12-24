@@ -31,12 +31,8 @@ impl SlothApp {
         } else if input == "instapaper" {
             match InstapaperApp::new(self.config.clone()) {
                 Ok(instapaper_app) => instapaper_app.start(),
-                Err(InstapaperConfigError::NoConsumerKey) => {
-                    println!("Make sure to add a consumer_key to your [instapaper] section of ~/.sloth.toml");
-                    return true;
-                },
-                Err(InstapaperConfigError::NoConsumerSecret) => {
-                    println!("Make sure to add a consumer_secret to your [instapaper] section of ~/.sloth.toml");
+                Err(InstapaperConfigError::MissingValue) => {
+                    println!("Make sure your [instapaper] section has all the values it needs.");
                     return true;
                 },
                 Err(InstapaperConfigError::NoInstapaperConfig) => {

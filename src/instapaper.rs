@@ -1,4 +1,6 @@
 use config::SlothConfig;
+extern crate toml;
+use std::collections::BTreeMap;
 extern crate hyper;
 
 #[derive(Debug)]
@@ -10,54 +12,28 @@ pub struct InstapaperApp {
 }
 
 pub enum InstapaperConfigError {
-    NoConsumerKey,
-    NoConsumerSecret,
+    MissingValue, // TODO: include a value in this variant which tells you which value is missing
     NoInstapaperConfig,
     TypeError,
 }
 
 impl InstapaperApp {
-    // FIXME: figure out idiomatic way to write something like this
-    // I wrote it out handling all possible paths to get a feel for
-    // handling all paths the painful way, to motivate me to learn
-    // the rigth way...
     pub fn new(config: SlothConfig) -> Result<InstapaperApp, InstapaperConfigError> {
-        match config.value.get("instapaper") {
-            Some(instapaper) => {
-                match instapaper.as_table() {
-                    Some(table) => {
-                        match table.get("consumer_key") {
-                            Some(consumer_key) => {
-                                match table.get("consumer_secret") {
-                                    Some(consumer_secret) => {
-                                        match consumer_key.as_str() {
-                                            Some(consumer_key) => {
-                                                match consumer_secret.as_str() {
-                                                    Some(consumer_secret) => {
-                                                        Ok(InstapaperApp {
-                                                            consumer_key: consumer_key.to_owned(),
-                                                            consumer_secret: consumer_secret.to_owned(),
-                                                            username: String::from("TKTK"),
-                                                            password: String::from("TKTK"),
-                                                        })
-                                                    },
-                                                    None => Err(InstapaperConfigError::TypeError),
-                                                }
-                                            },
-                                            None => Err(InstapaperConfigError::TypeError),
-                                        }
-                                    },
-                                    None => Err(InstapaperConfigError::NoConsumerSecret),
-                                }
-                            },
-                            None => Err(InstapaperConfigError::NoConsumerKey),
-                        }
-                    },
-                    None => Err(InstapaperConfigError::TypeError),
-                }
-            },
-            None => Err(InstapaperConfigError::NoInstapaperConfig),
-        }
+        let instapaper_section = try!(config.value.get("instapaper").ok_or(InstapaperConfigError::NoInstapaperConfig));
+        let instapaper_config = try!(instapaper_section.as_table().ok_or(InstapaperConfigError::TypeError));
+        Ok(InstapaperApp {
+            consumer_key: try!(InstapaperApp::extract_string_from_table(instapaper_config, "consumer_key")),
+            consumer_secret: try!(InstapaperApp::extract_string_from_table(instapaper_config, "consumer_secret")),
+            username: try!(InstapaperApp::extract_string_from_table(instapaper_config, "username")),
+            password: try!(InstapaperApp::extract_string_from_table(instapaper_config, "password")),
+        })
+    }
+
+    fn extract_string_from_table(table: &BTreeMap<String, toml::Value>, key: &str) -> Result<String, InstapaperConfigError> {
+        Ok(try!(
+            try!(table.get(key).ok_or(InstapaperConfigError::MissingValue))
+                .as_str().ok_or(InstapaperConfigError::TypeError)
+        ).to_owned())
     }
 
     pub fn start(&self) {
