@@ -4,7 +4,8 @@ use std::collections::BTreeMap;
 extern crate hyper;
 use std::io::Read;
 use std::time::UNIX_EPOCH;
-use std::hash::{Hash, Hasher, SipHasher};
+use std::hash::Hasher;
+use std::collections::hash_map::DefaultHasher;
 
 pub struct InstapaperApp {
     consumer_key: String,
@@ -73,9 +74,8 @@ impl InstapaperApp {
     }
 
     fn hash(input: String) -> String {
-        // FIXME: this hasher is deprecated (although the docs pointed me to it so shrug)
-        let mut s = SipHasher::new();
-        input.hash(&mut s);
+        let mut s = DefaultHasher::new();
+        s.write(input.as_bytes());
         format!("{}", s.finish())
     }
 }
