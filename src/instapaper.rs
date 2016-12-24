@@ -15,7 +15,7 @@ pub struct InstapaperApp {
 }
 
 pub enum InstapaperConfigError {
-    MissingValue, // TODO: include a value in this variant which tells you which value is missing
+    MissingValue(String), /* TODO: include a value in this variant which tells you which value is missing */
     NoInstapaperConfig,
     TypeError,
 }
@@ -39,7 +39,7 @@ impl InstapaperApp {
     fn extract_string_from_table(table: &BTreeMap<String, toml::Value>,
                                  key: &str)
                                  -> Result<String, InstapaperConfigError> {
-        Ok(try!(try!(table.get(key).ok_or(InstapaperConfigError::MissingValue))
+        Ok(try!(try!(table.get(key).ok_or(InstapaperConfigError::MissingValue(key.to_owned())))
                 .as_str()
                 .ok_or(InstapaperConfigError::TypeError))
             .to_owned())
@@ -56,9 +56,13 @@ impl InstapaperApp {
         // FIXME: don't unwrap
         let timestamp = UNIX_EPOCH.elapsed().unwrap().as_secs();
         let oauth_nonce = InstapaperApp::hash(format!("{}", timestamp));
-        headers.set(
-            hyper::header::Authorization(format!("OAuth oauth_nonce=\"{}\", oauth_signature_method=\"HMAC-SHA1\", oauth_consumer_key=\"{}\", oauth_timestamp=\"{}\"", oauth_nonce, self.consumer_key, timestamp))
-        );
+        headers.set(hyper::header::Authorization(format!("OAuth oauth_nonce=\"{}\", \
+                                                          oauth_signature_method=\"HMAC-SHA1\", \
+                                                          oauth_consumer_key=\"{}\", \
+                                                          oauth_timestamp=\"{}\"",
+                                                         oauth_nonce,
+                                                         self.consumer_key,
+                                                         timestamp)));
 
         let post_request = client.post("https://instapaper.com/api/1/oauth/access_token");
         // Currently getting a forbidden response! because missing an oauth_signature
@@ -68,7 +72,7 @@ impl InstapaperApp {
                 println!("OK: {:?}", response);
                 response.read_to_string(&mut response_body).unwrap();
                 println!("Body: {:?}", response_body);
-            },
+            }
             Err(err) => println!("ERR: {:?}", err),
         }
     }

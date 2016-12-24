@@ -30,8 +30,10 @@ impl SlothApp {
         } else if input == "instapaper" {
             match InstapaperApp::new(self.config.clone()) {
                 Ok(instapaper_app) => instapaper_app.start(),
-                Err(InstapaperConfigError::MissingValue) => {
-                    println!("Make sure your [instapaper] section has all the values it needs.");
+                Err(InstapaperConfigError::MissingValue(val)) => {
+                    println!("Make sure your [instapaper] section has all the values it \
+                              needs.\nMissing value: {}",
+                             val);
                     return true;
                 }
                 Err(InstapaperConfigError::NoInstapaperConfig) => {
