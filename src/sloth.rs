@@ -2,7 +2,6 @@ use instapaper::{InstapaperApp, InstapaperConfigError};
 use config::SlothConfig;
 use config::ConfigError;
 
-#[derive(Debug)]
 pub struct SlothApp {
     config: SlothConfig,
 }

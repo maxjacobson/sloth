@@ -3,7 +3,6 @@ extern crate toml;
 use std::collections::BTreeMap;
 extern crate hyper;
 
-#[derive(Debug)]
 pub struct InstapaperApp {
     consumer_key: String,
     consumer_secret: String,
@@ -43,7 +42,7 @@ impl InstapaperApp {
     }
 
     pub fn start(&self) {
-        println!("Starting Instapaper... {:?}", self);
+        println!("Starting Instapaper...");
         let client = hyper::client::Client::new();
         // FIXME: use the form url encoding feature of hyper...
         let body = format!("x_auth_username={}&x_auth_password={}&x_auth_mode=client_auth",

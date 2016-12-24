@@ -14,8 +14,6 @@ fn main() {
         }
     };
 
-    println!("{:?}", sloth);
-
     let mut rl = rustyline::Editor::<()>::new();
 
     loop {

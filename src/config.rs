@@ -12,7 +12,7 @@ pub enum ConfigError {
     NoHomeDirectory,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct SlothConfig {
     pub value: BTreeMap<String, toml::Value>,
 }
