@@ -39,10 +39,13 @@ impl InstapaperApp {
     pub fn start(&self) {
         println!("Starting Instapaper... {:?}", self);
         let client = hyper::client::Client::new();
+        // FIXME: use the form url encoding feature of hyper...
         let body = format!("x_auth_username={}&x_auth_password={}&x_auth_mode=client_auth", self.username, self.password);
+        let mut headers = hyper::header::Headers::new();
+
         let post_request = client.post("https://instapaper.com/api/1/oauth/access_token");
         // Currently getting a forbidden response!
-        match post_request.body(&body).send() {
+        match post_request.headers(headers).body(&body).send() {
             Ok(response) => println!("{:?}", response),
             Err(err) => println!("{:?}", err),
         }
