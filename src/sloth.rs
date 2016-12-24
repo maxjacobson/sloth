@@ -34,15 +34,15 @@ impl SlothApp {
                 Err(InstapaperConfigError::MissingValue) => {
                     println!("Make sure your [instapaper] section has all the values it needs.");
                     return true;
-                },
+                }
                 Err(InstapaperConfigError::NoInstapaperConfig) => {
                     println!("Make sure to add an [instapaper] section to your ~/.sloth.toml");
                     return true;
-                },
+                }
                 Err(InstapaperConfigError::TypeError) => {
                     println!("Make sure your instapaper config has correct types");
                     return true;
-                },
+                }
             }
         } else if input == "exit" {
             return true;
