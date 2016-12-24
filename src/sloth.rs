@@ -1,4 +1,4 @@
-use instapaper::InstapaperApp;
+use instapaper::{InstapaperApp, InstapaperConfigError};
 use config::SlothConfig;
 use config::ConfigError;
 
@@ -31,10 +31,22 @@ impl SlothApp {
         } else if input == "instapaper" {
             match InstapaperApp::new(self.config.clone()) {
                 Ok(instapaper_app) => instapaper_app.start(),
-                Err(_) => {
-                    println!("UH OH");
+                Err(InstapaperConfigError::NoConsumerKey) => {
+                    println!("Make sure to add a consumer_key to your [instapaper] section of ~/.sloth.toml");
                     return true;
-                }
+                },
+                Err(InstapaperConfigError::NoConsumerSecret) => {
+                    println!("Make sure to add a consumer_secret to your [instapaper] section of ~/.sloth.toml");
+                    return true;
+                },
+                Err(InstapaperConfigError::NoInstapaperConfig) => {
+                    println!("Make sure to add an [instapaper] section to your ~/.sloth.toml");
+                    return true;
+                },
+                Err(InstapaperConfigError::TypeError) => {
+                    println!("Make sure your instapaper config has correct types");
+                    return true;
+                },
             }
         } else if input == "exit" {
             return true;

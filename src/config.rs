@@ -14,7 +14,7 @@ pub enum ConfigError {
 
 #[derive(Debug, Clone)]
 pub struct SlothConfig {
-    value: BTreeMap<String, toml::Value>,
+    pub value: BTreeMap<String, toml::Value>,
 }
 
 impl SlothConfig {
